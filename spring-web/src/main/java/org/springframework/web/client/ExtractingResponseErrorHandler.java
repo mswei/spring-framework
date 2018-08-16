@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 the original author or authors.
+ * Copyright 2002-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,15 +29,16 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 
 /**
- * Implementation of {@link ResponseErrorHandler} that uses {@link HttpMessageConverter}s to
- * convert HTTP error responses to {@link RestClientException}.
+ * Implementation of {@link ResponseErrorHandler} that uses {@link HttpMessageConverter
+ * HttpMessageConverters} to convert HTTP error responses to {@link RestClientException
+ * RestClientExceptions}.
  *
  * <p>To use this error handler, you must specify a
  * {@linkplain #setStatusMapping(Map) status mapping} and/or a
  * {@linkplain #setSeriesMapping(Map) series mapping}. If either of these mappings has a match
  * for the {@linkplain ClientHttpResponse#getStatusCode() status code} of a given
  * {@code ClientHttpResponse}, {@link #hasError(ClientHttpResponse)} will return
- * {@code true} and {@link #handleError(ClientHttpResponse)} will attempt to use the
+ * {@code true}, and {@link #handleError(ClientHttpResponse)} will attempt to use the
  * {@linkplain #setMessageConverters(List) configured message converters} to convert the response
  * into the mapped subclass of {@link RestClientException}. Note that the
  * {@linkplain #setStatusMapping(Map) status mapping} takes precedence over
