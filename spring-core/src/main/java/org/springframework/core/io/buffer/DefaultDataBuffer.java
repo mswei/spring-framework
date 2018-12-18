@@ -294,10 +294,7 @@ public class DefaultDataBuffer implements DataBuffer {
 	@Override
 	public DefaultDataBuffer write(DataBuffer... buffers) {
 		if (!ObjectUtils.isEmpty(buffers)) {
-			ByteBuffer[] byteBuffers =
-					Arrays.stream(buffers).map(DataBuffer::asByteBuffer)
-							.toArray(ByteBuffer[]::new);
-			write(byteBuffers);
+			write(Arrays.stream(buffers).map(DataBuffer::asByteBuffer).toArray(ByteBuffer[]::new));
 		}
 		return this;
 	}
@@ -431,7 +428,7 @@ public class DefaultDataBuffer implements DataBuffer {
 
 	@Override
 	public String toString() {
-		return String.format("DefaultDataBuffer (r: %d, w %d, c %d)",
+		return String.format("DefaultDataBuffer (r: %d, w: %d, c: %d)",
 				this.readPosition, this.writePosition, this.capacity);
 	}
 
