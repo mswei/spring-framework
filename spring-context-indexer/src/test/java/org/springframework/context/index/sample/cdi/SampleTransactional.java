@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2018 the original author or authors.
+ * Copyright 2002-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,18 @@
  * limitations under the License.
  */
 
-package org.springframework.oxm.castor;
+package org.springframework.context.index.sample.cdi;
+
+import javax.transaction.Transactional;
 
 /**
- * Represents a POJO used by {@link CastorMarshallerTests} for testing the marshaller output.
+ * Test candidate for {@link Transactional}. This verifies that the annotation processor
+ * can process an annotation that declares itself with an annotation that is not on the
+ * classpath.
  *
- * @author Jakub Narloch
+ * @author Vedran Pavic
+ * @author Stephane Nicoll
  */
-public class CastorObject {
-
-	private String name;
-
-	private Integer value;
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Integer getValue() {
-		return value;
-	}
-
-	public void setValue(Integer value) {
-		this.value = value;
-	}
+@Transactional
+public class SampleTransactional {
 }

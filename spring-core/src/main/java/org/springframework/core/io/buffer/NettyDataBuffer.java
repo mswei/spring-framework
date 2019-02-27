@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2018 the original author or authors.
+ * Copyright 2002-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,14 @@ package org.springframework.core.io.buffer;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.function.IntPredicate;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
+import io.netty.buffer.ByteBufUtil;
 
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -33,6 +36,7 @@ import org.springframework.util.ObjectUtils;
  * {@link ByteBuf}. Typically constructed with {@link NettyDataBufferFactory}.
  *
  * @author Arjen Poutsma
+ * @author Brian Clozel
  * @since 5.0
  */
 public class NettyDataBuffer implements PooledDataBuffer {
@@ -139,6 +143,12 @@ public class NettyDataBuffer implements PooledDataBuffer {
 	}
 
 	@Override
+	public DataBuffer ensureCapacity(int capacity) {
+		this.byteBuf.ensureWritable(capacity);
+		return this;
+	}
+
+	@Override
 	public byte read() {
 		return this.byteBuf.readByte();
 	}
@@ -178,14 +188,14 @@ public class NettyDataBuffer implements PooledDataBuffer {
 		if (!ObjectUtils.isEmpty(buffers)) {
 			if (hasNettyDataBuffers(buffers)) {
 				ByteBuf[] nativeBuffers = new ByteBuf[buffers.length];
-				for (int i = 0 ; i < buffers.length; i++) {
+				for (int i = 0; i < buffers.length; i++) {
 					nativeBuffers[i] = ((NettyDataBuffer) buffers[i]).getNativeBuffer();
 				}
 				write(nativeBuffers);
 			}
 			else {
 				ByteBuffer[] byteBuffers = new ByteBuffer[buffers.length];
-				for (int i = 0 ; i < buffers.length; i++) {
+				for (int i = 0; i < buffers.length; i++) {
 					byteBuffers[i] = buffers[i].asByteBuffer();
 
 				}
@@ -225,6 +235,22 @@ public class NettyDataBuffer implements PooledDataBuffer {
 			for (ByteBuf byteBuf : byteBufs) {
 				this.byteBuf.writeBytes(byteBuf);
 			}
+		}
+		return this;
+	}
+
+	@Override
+	public DataBuffer write(CharSequence charSequence, Charset charset) {
+		Assert.notNull(charSequence, "CharSequence must not be null");
+		Assert.notNull(charset, "Charset must not be null");
+		if (StandardCharsets.UTF_8.equals(charset)) {
+			ByteBufUtil.writeUtf8(this.byteBuf, charSequence);
+		}
+		else if (StandardCharsets.US_ASCII.equals(charset)) {
+			ByteBufUtil.writeAscii(this.byteBuf, charSequence);
+		}
+		else {
+			return PooledDataBuffer.super.write(charSequence, charset);
 		}
 		return this;
 	}
